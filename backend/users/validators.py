@@ -9,7 +9,7 @@ class UsernameRegexValidator(UnicodeUsernameValidator):
     message = ('Имя пользователя может содержать'
                ' только буквы, цифры и знаки @/./+/-/_.')
     error_messages = {
-        'invalid': 'Набор символов не более 254. '
+        'invalid': 'Набор символов не более 150. '
                    'Только буквы, цифры и @/./+/-/_',
         'required': 'Поле не может быть пустым',
     }

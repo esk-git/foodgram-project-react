@@ -4,8 +4,8 @@ import os
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.db.utils import IntegrityError
+from recipes.models import Ingredient
 
-from ...models import Ingredient
 
 class Command(BaseCommand):
     help = 'Загрузка ингредиентов json'

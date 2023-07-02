@@ -11,8 +11,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 import os
-from pathlib import Path
 from datetime import timedelta
+from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-7dck6+o^c(zuuc1vh5c+*uo)ihqg6d!)!q8(-z=kz^l&ocd-jh
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost',]
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', ]
 
 
 # Application definition
@@ -149,23 +149,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.User'
 
 REST_FRAMEWORK = {
-    # 'DEFAULT_PERMISSION_CLASSES': [
-    #     'rest_framework.permissions.AllowAny', 
-    # ],
-
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
-    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 6,
 }
 
 
 SIMPLE_JWT = {
     # Устанавливаем срок жизни токена
-   'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
-   'AUTH_HEADER_TYPES': ('Bearer',),
-} 
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}
 
 
 DJOSER = {

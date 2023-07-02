@@ -1,12 +1,11 @@
 import io
-from django.shortcuts import render, get_object_or_404
-from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.viewsets import ViewSet, ModelViewSet, ReadOnlyModelViewSet, GenericViewSet, mixins
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.decorators import action
-from rest_framework.permissions import SAFE_METHODS, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework import filters
@@ -15,23 +14,22 @@ from reportlab.pdfgen import canvas
 from api.permissions import AuthorOrReadOnly
 from recipes.models import (Tag, Recipe, Ingredient,
                             RecipeIngredient, Favorite, Cart)
-from api.serializers import (TagSerializer, FollowSerializer, CustomUserSerializer,
-                             IngredientSerializer, RecipeSerializer, RecipeListSerializer,
-                             RecipeForFollowSerializer)
+from api.serializers import (TagSerializer, FollowSerializer,
+                             IngredientSerializer, RecipeSerializer,
+                             RecipeListSerializer, RecipeForFollowSerializer)
 from users.models import User, Follow
 
 
-class FollowViewSet(UserViewSet): # удалить mixins.RetrieveModelMixin, mixins.DestroyModelMixin, GenericViewSet
-    # удалить queryset = Follow.objects.all() 
-    # удалить serializer_class = CustomUserSerializer
+class FollowViewSet(UserViewSet):
     pagination_class = PageNumberPagination
 
     @action(detail=False, methods=['get'])
     def subscriptions(self, request):
-        # user = request.user
-        queryset = request.user.follower.all() # удалить User.objects.filter(follower__user=user)
+        queryset = request.user.follower.all()
         pages = self.paginate_queryset(queryset)
-        serializer = FollowSerializer(pages, many=True, context={'request':request})
+        serializer = FollowSerializer(
+            pages, many=True, context={'request': request}
+        )
         return self.get_paginated_response(serializer.data)
 
     @action(detail=True, methods=['post', 'delete'])
@@ -42,17 +40,19 @@ class FollowViewSet(UserViewSet): # удалить mixins.RetrieveModelMixin, mi
 
         if user == author:
             return Response({'message': 'Вы не можете подписаться на себя'})
-        
+
         message = ''
 
         if request.method == 'POST':
             if Follow.objects.filter(user=self.request.user,
-                                        author=author).exists():
+                                     author=author).exists():
                 return Response(
                     {'errors': f'Вы уже подписаны на {author}'})
-            queryset = Follow.objects.create(user=self.request.user, author=author)
-            serializer = FollowSerializer(queryset, context={'request':request})
-            return Response(serializer.data) # message = f'Вы подписались на {author}'
+            queryset = Follow.objects.create(user=self.request.user,
+                                             author=author)
+            serializer = FollowSerializer(queryset,
+                                          context={'request': request})
+            return Response(serializer.data)
         elif request.method == 'DELETE':
             Follow.objects.filter(user=user, author=author).delete()
             message = f'Вы отписались от {author}'
@@ -87,7 +87,7 @@ class RecipeViewSet(ModelViewSet):
         if self.action in ('list', 'rerieve'):
             return RecipeListSerializer
         return RecipeSerializer
-    
+
     @action(detail=True, methods=('post', 'delete'))
     def favorite(self, request, pk=None):
         recipe = get_object_or_404(Recipe, id=pk)
@@ -119,14 +119,16 @@ class RecipeViewSet(ModelViewSet):
             )
         return Response({'errors': 'Отсутствует в списке'})
 
-    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
+    @action(detail=False, methods=['get'],
+            permission_classes=[IsAuthenticated])
     def download_shopping_cart(self, request):
         shopping_cart = Cart.objects.filter(user=request.user)
         recipe_ids = shopping_cart.values_list('recipe_id', flat=True)
         ingredients = RecipeIngredient.objects.filter(recipe__in=recipe_ids)
         ingredient_dict = {}
         for ingredient in ingredients:
-            key = (ingredient.ingredient.name, ingredient.ingredient.measurement_unit)
+            key = (ingredient.ingredient.name,
+                   ingredient.ingredient.measurement_unit)
             if key in ingredient_dict:
                 ingredient_dict[key] += ingredient.amount
             else:
@@ -149,7 +151,9 @@ class RecipeViewSet(ModelViewSet):
         buffer.seek(0)
 
         response = HttpResponse(content_type='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename="shopping_cart.pdf"'
+        response['Content-Disposition'] = (
+            'attachment; filename="shopping_cart.pdf"'
+        )
         response.write(buffer.getvalue())
 
         return response

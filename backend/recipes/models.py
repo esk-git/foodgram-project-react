@@ -1,7 +1,6 @@
-from django.db import models
 from django.contrib.auth import get_user_model
+from django.db import models
 from django.utils.text import slugify
-from django.core.validators import MinValueValidator
 
 User = get_user_model()
 
@@ -33,7 +32,7 @@ class Tag(models.Model):
         if not self.slug:
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
-    
+
     def __str__(self):
         return self.name
 
