@@ -131,3 +131,5 @@ dmypy.json
 # .idea
 .idea
 backend/venv
+backend/media
+backend/recipe_images
