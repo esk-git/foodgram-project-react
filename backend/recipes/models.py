@@ -51,9 +51,6 @@ class Ingredient(models.Model):
         max_length=200,
         verbose_name='Единица измерение'
     )
-    # amount = models.PositiveIntegerField(
-    #     verbose_name='Количество'
-    # ) # может убрать в сериализатор
 
     def __str__(self):
         return self.name
