@@ -133,3 +133,5 @@ dmypy.json
 backend/venv
 backend/media
 backend/recipe_images
+backend/db_foodgram.sqlite3
+.vscode
