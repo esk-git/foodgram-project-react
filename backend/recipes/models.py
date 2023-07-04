@@ -1,3 +1,7 @@
+from constants import (COOKING_TIME_MIN, INGREDIENT_MEASURE_MAX_LEGTH,
+                       INGREDIENT_NAME_MAX_LEGTH, RECIPE_NAME_MAX_LENGTH,
+                       TAG_COLOR_MAX_LEGTH, TAG_NAME_MAX_LEGTH,
+                       TAG_SLUG_MAX_LEGTH)
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.text import slugify
@@ -9,26 +13,26 @@ class Tag(models.Model):
     """Модель для тегов"""
     name = models.CharField(
         'Название тега',
-        max_length=200,
+        max_length=TAG_NAME_MAX_LEGTH,
         unique=True,
     )
     color = models.CharField(
         'Цвет тега в HEX',
-        max_length=7,
+        max_length=TAG_COLOR_MAX_LEGTH,
         null=True,
         blank=True,
         unique=True,
     )
     slug = models.SlugField(
         'Уникальный слаг',
-        max_length=200,
+        max_length=TAG_SLUG_MAX_LEGTH,
         unique=True,
         null=True,
         blank=True,
     )
 
     def save(self, *args, **kwargs):
-        """Если забыли указать слаг, то присвоить слаг такойже как имя"""
+        """Если забыли указать слаг, то присвоить слаг такой же как имя"""
         if not self.slug:
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
@@ -45,11 +49,11 @@ class Ingredient(models.Model):
     """Модель для ингридиентов"""
     name = models.CharField(
         verbose_name='Название ингридиента',
-        max_length=200,
+        max_length=INGREDIENT_NAME_MAX_LEGTH,
     )
     measurement_unit = models.CharField(
-        max_length=200,
-        verbose_name='Единица измерение'
+        max_length=INGREDIENT_MEASURE_MAX_LEGTH,
+        verbose_name='Единица измерения'
     )
 
     def __str__(self):
@@ -64,7 +68,7 @@ class Recipe(models.Model):
     """Модель для рецептов"""
     name = models.CharField(
         verbose_name='Название блюда',
-        max_length=200
+        max_length=RECIPE_NAME_MAX_LENGTH
     )
     author = models.ForeignKey(
         User,
@@ -74,7 +78,7 @@ class Recipe(models.Model):
     )
     tags = models.ManyToManyField(
         Tag,
-        verbose_name='Тэг'
+        verbose_name='Тэги'
     )
     ingredients = models.ManyToManyField(
         Ingredient,
@@ -86,7 +90,7 @@ class Recipe(models.Model):
     )
     cooking_time = models.PositiveIntegerField(
         verbose_name='Время приготовления',
-        default=1
+        default=COOKING_TIME_MIN
     )
     is_favorited = models.BooleanField(
         default=False,
@@ -101,6 +105,10 @@ class Recipe(models.Model):
         upload_to='recipe_images/',
         blank=True
     )
+    pub_date = models.DateTimeField(
+        verbose_name='Дата публикации',
+        auto_now_add=True,
+    )
 
     def __str__(self):
         return self.name
@@ -108,6 +116,7 @@ class Recipe(models.Model):
     class Meta:
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
+        ordering = ['-pub_date']
 
 
 class RecipeIngredient(models.Model):
@@ -150,6 +159,9 @@ class Favorite(models.Model):
         verbose_name='Пользователь'
     )
 
+    def __str__(self) -> str:
+        return f'{self.user} добавил в избранное рецепт {self.recipe.name}'
+
     class Meta:
         verbose_name = 'Избранное'
         verbose_name_plural = 'Избранные'
@@ -170,6 +182,10 @@ class Cart(models.Model):
         related_name='cart',
         verbose_name='Список покупок пользователя'
     )
+
+    def __str__(self) -> str:
+        return (f'Корзина {self.user} пополнилась '
+                f'ингридиентами для {self.recipe.name}')
 
     class Meta:
         verbose_name = 'Список покупок'
