@@ -1,4 +1,5 @@
 import io
+import os
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
 from django.http import HttpResponse
@@ -9,6 +10,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework import filters
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 
 from api.permissions import AuthorOrReadOnly
@@ -140,7 +143,11 @@ class RecipeViewSet(ModelViewSet):
         buffer = io.BytesIO()
 
         p = canvas.Canvas(buffer)
-        p.setFont('Helvetica', 12)
+        font_path = os.path.join(
+            os.path.dirname(__file__), 'Arial Unicode.ttf'
+        )
+        pdfmetrics.registerFont(TTFont('ArialUnicode', font_path))
+        p.setFont('ArialUnicode', 12)
         p.drawString(100, 100, "Список покупок")
 
         y = 120
