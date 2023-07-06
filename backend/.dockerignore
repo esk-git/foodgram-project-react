@@ -5,3 +5,5 @@ db.sqlite3
 backend/db_foodgram.sqlite3
 .vscode
 backend/.env
+backend/media
+backend/recipe_images

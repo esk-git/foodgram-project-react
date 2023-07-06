@@ -14,6 +14,7 @@ from reportlab.pdfgen import canvas
 from api.permissions import AuthorOrReadOnly
 from recipes.models import (Tag, Recipe, Ingredient,
                             RecipeIngredient, Favorite, Cart)
+from api.filters import IngredientFilter, RecipeFilter
 from api.serializers import (TagSerializer, FollowSerializer,
                              IngredientSerializer, RecipeSerializer,
                              RecipeListSerializer, RecipeForFollowSerializer)
@@ -70,7 +71,8 @@ class TagViewSet(ReadOnlyModelViewSet):
 class IngredientViewSet(ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    filter_backends = (filters.SearchFilter,)
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
+    filterset_class = IngredientFilter
     search_fields = ('name',)
 
 
@@ -79,6 +81,7 @@ class RecipeViewSet(ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     pagination_class = PageNumberPagination
     permission_classes = (AuthorOrReadOnly,)
+    filterset_class = RecipeFilter
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -137,12 +140,14 @@ class RecipeViewSet(ModelViewSet):
         buffer = io.BytesIO()
 
         p = canvas.Canvas(buffer)
-        p.drawString(100, 100, "Shopping Cart")
+        p.setFont('Helvetica', 12)
+        p.drawString(100, 100, "Список покупок")
 
         y = 120
         for ingredient, amount in ingredient_dict.items():
             name, unit = ingredient
-            p.drawString(100, y, f"{name}: {amount} {unit}")
+            ingredient_line = f"{name}: {amount} {unit}"
+            p.drawString(100, y, ingredient_line)
             y += 20
 
         p.showPage()
