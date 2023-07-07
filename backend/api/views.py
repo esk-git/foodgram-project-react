@@ -144,7 +144,7 @@ class RecipeViewSet(ModelViewSet):
 
         p = canvas.Canvas(buffer)
         font_path = os.path.join(
-            os.path.dirname(__file__), 'Arial Unicode.ttf'
+            os.path.dirname(__file__), 'Arial_Unicode.ttf'
         )
         pdfmetrics.registerFont(TTFont('ArialUnicode', font_path))
         p.setFont('ArialUnicode', 12)
