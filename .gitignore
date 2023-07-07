@@ -135,3 +135,4 @@ backend/media
 backend/recipe_images
 backend/db_foodgram.sqlite3
 .vscode
+db_foodgram.sqlite3
