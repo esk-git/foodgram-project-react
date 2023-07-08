@@ -11,10 +11,17 @@ class TagAdmin(admin.ModelAdmin):
     search_fields = ['name', 'slug']
 
 
+class RecipeIngredientInLine(admin.TabularInline):
+    model = RecipeIngredient
+    extra = 1
+    min_num = 1
+
+
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
     list_display = ('name', 'id', 'author', 'is_favorited')
     list_filter = ('author', 'name', 'tags',)
+    inlines = [RecipeIngredientInLine]
 
 
 class IngredientResource(resources.ModelResource):
