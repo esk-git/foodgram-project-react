@@ -14,7 +14,7 @@ from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas
 
-from api.permissions import AuthorOrReadOnly
+from api.permissions import IsAuthenticatedOrAuthorOrReadOnly
 from recipes.models import (Tag, Recipe, Ingredient,
                             RecipeIngredient, Favorite, Cart)
 from api.filters import IngredientFilter, RecipeFilter
@@ -68,7 +68,6 @@ class TagViewSet(ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     pagination_class = None
-    # permission_classes = (IsAdminOrReadOnly,)
 
 
 class IngredientViewSet(ReadOnlyModelViewSet):
@@ -83,7 +82,7 @@ class RecipeViewSet(ModelViewSet):
     queryset = Recipe.objects.all()
     filter_backends = (DjangoFilterBackend,)
     pagination_class = PageNumberPagination
-    permission_classes = (AuthorOrReadOnly,)
+    permission_classes = (IsAuthenticatedOrAuthorOrReadOnly,)
     filterset_class = RecipeFilter
 
     def perform_create(self, serializer):

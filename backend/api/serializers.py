@@ -157,7 +157,6 @@ class RecipeSerializer(ModelSerializer):
 
     class Meta:
         model = Recipe
-        # exclude = ('author',)
         fields = (
             'ingredients',
             'tags',
