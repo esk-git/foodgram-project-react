@@ -147,14 +147,14 @@ class RecipeViewSet(ModelViewSet):
         )
         pdfmetrics.registerFont(TTFont('ArialUnicode', font_path))
         p.setFont('ArialUnicode', 12)
-        p.drawString(100, 100, "Список покупок")
+        p.drawString(100, 770, "Список покупок")
 
-        y = 120
+        y = 740
         for ingredient, amount in ingredient_dict.items():
             name, unit = ingredient
             ingredient_line = f"{name}: {amount} {unit}"
             p.drawString(100, y, ingredient_line)
-            y += 20
+            y -= 20
 
         p.showPage()
         p.save()

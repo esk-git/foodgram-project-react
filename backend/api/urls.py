@@ -5,16 +5,16 @@ from api.views import (FollowViewSet, IngredientViewSet,
 
 app_name = 'api'
 
-router = DefaultRouter()
+router_v1 = DefaultRouter()
 
-router.register('tags', TagViewSet)
-router.register('users', FollowViewSet)
-router.register('recipes', RecipeViewSet)
-router.register('ingredients', IngredientViewSet)
+router_v1.register('tags', TagViewSet, basename='tag')
+router_v1.register('users', FollowViewSet, basename='follow')
+router_v1.register('recipes', RecipeViewSet, basename='recipe')
+router_v1.register('ingredients', IngredientViewSet, basename='ingredient')
 
 
 urlpatterns = [
     path('auth/', include('djoser.urls.authtoken')),
-    path('', include(router.urls)),
+    path('', include(router_v1.urls)),
     path('', include('djoser.urls')),
 ]
